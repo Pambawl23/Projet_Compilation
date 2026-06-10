@@ -1,0 +1,16 @@
+# Fichiers générés par Bison
+parser.tab.c
+parser.tab.h
+
+# Fichiers générés par Flex
+lex.yy.c
+
+# Fichiers objets
+*.o
+
+# Exécutables
+*.out
+sgn_parser
+
+# Autres exécutables éventuels
+a.out
