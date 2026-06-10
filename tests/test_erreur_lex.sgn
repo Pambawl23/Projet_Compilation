@@ -1,0 +1,15 @@
+-- Test erreurs lexicales
+ANNEE "2025-2026"
+
+NIVEAU L1 {
+    ETUDIANT {
+        MATRICULE : "L1-2025-003
+        NOM : "FALL Ibou"
+        PRENOM : "Ibou"
+        SEMESTRE S1 {
+            MODULE "Algo" COEF 3 NOTE 14.5
+            MODULE "Maths" COEF 2 NOTE @invalide
+            MODULE "Physique" COEF # NOTE 10.0
+        }
+    }
+}
