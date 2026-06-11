@@ -1,6 +1,6 @@
 # ================================================================
 # app.py — Application principale SGN (PyQt6)
-# Auteurs : Gilbert Ngor Thiomby DIOUF
+# Auteur : Gilbert Ngor Thiomby DIOUF
 # Usage   : python3 app.py
 # ================================================================
 import sys, os, csv, json
