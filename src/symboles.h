@@ -1,8 +1,6 @@
 /*
  * symboles.h — Déclarations SGN (structures, constantes, prototypes)
- * Auteurs : [NOM1] & [NOM2] | Juin 2026
- * Règle   : ce fichier ne contient AUCUNE implémentation.
- *           Les corps de fonctions sont dans main.c.
+ * Auteur : Papa Mbaye BA
  */
 #ifndef SYMBOLES_H
 #define SYMBOLES_H

@@ -1,5 +1,5 @@
 # interface.py — Widgets réutilisables SGN (PyQt6)
-# Auteurs : [NOM1] & [NOM2] | Juin 2026
+# Auteur : Gilbert Ngor Thiomby DIOUF
 
 from PyQt6.QtWidgets import QLabel, QFrame, QVBoxLayout
 from PyQt6.QtCore    import Qt
