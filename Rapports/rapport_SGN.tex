@@ -1,0 +1,1051 @@
+\documentclass[10pt,a4paper]{article}
+
+% --- Encodage et langue ---
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+
+% --- Mise en page ---
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Typographie ---
+\usepackage{microtype}
+\usepackage{parskip}
+\setlength{\parindent}{0pt}
+
+% --- Couleurs et boites ---
+\usepackage{xcolor}
+\definecolor{bleuSGN}{RGB}{0,0,0}
+\definecolor{vertSGN}{RGB}{15,100,80}
+\definecolor{rougeSGN}{RGB}{180,40,40}
+\definecolor{grisbg}{RGB}{248,248,250}
+\definecolor{grisrule}{RGB}{200,200,210}
+\definecolor{ambre}{RGB}{180,110,10}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable,listings}
+
+% --- Code source ---
+\usepackage{listings}
+
+\lstdefinelanguage{SGN}{
+  morekeywords={ANNEE,NIVEAU,ETUDIANT,MATRICULE,NOM,PRENOM,SEMESTRE,MODULE,COEF,NOTE,L1,L2,L3,S1,S2,S3,S4,S5,S6},
+  morecomment=[l]{--},
+  morestring=[b]",
+  sensitive=true
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{grisbg},
+  rulecolor=\color{grisrule},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  xleftmargin=2em,
+  framexleftmargin=2em,
+  showstringspaces=false,
+  tabsize=4,
+  captionpos=b
+}
+
+\lstdefinestyle{styleC}{language=C,
+  keywordstyle=\color{bleuSGN}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{rougeSGN},
+  morekeywords={Programme,Niveau,Etudiant,Semestre,Module,ErreurSGN,
+                CodeNiveau,CodeSemestre,NIV_L1,NIV_L2,NIV_L3,
+                SEM_S1,SEM_S2,SEM_S3,SEM_S4,SEM_S5,SEM_S6}
+}
+
+\lstdefinestyle{styleFlex}{language=C,
+  keywordstyle=\color{vertSGN}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{rougeSGN}
+}
+
+\lstdefinestyle{styleBison}{language=C,
+  keywordstyle=\color{ambre}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{rougeSGN}
+}
+
+\lstdefinestyle{styleJSON}{
+  language={},
+  basicstyle=\ttfamily\small,
+  stringstyle=\color{vertSGN},
+  keywordstyle=\color{bleuSGN},
+  morestring=[b]",
+  showstringspaces=false
+}
+
+% --- Tableaux ---
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\renewcommand{\arraystretch}{1.35}
+
+% --- Graphiques / tikz ---
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
+\usepackage{float}  % Ajoute cette ligne dans ton préambule
+
+\tikzset{
+  boite/.style={rectangle, rounded corners=4pt, draw=bleuSGN, fill=blue!6,
+                text width=2.5cm, align=center, minimum height=0.7cm, font=\small},
+  boiteC/.style={boite, fill=green!8, draw=vertSGN},
+  boiteP/.style={boite, fill=orange!8, draw=ambre},
+  boiteE/.style={boite, fill=red!6, draw=rougeSGN},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, draw=gray!70},
+  etiq/.style={font=\footnotesize, text=gray!80}
+}
+
+% --- En-tetes et pieds de page ---
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{Rapport SGN — Compilation}}
+\fancyhead[R]{\small\textit{2025--2026}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Liens ---
+\usepackage[colorlinks=true,linkcolor=bleuSGN,urlcolor=bleuSGN,citecolor=bleuSGN]{hyperref}
+
+% --- Titres ---
+\usepackage{titlesec}
+\titleformat{\section}[block]
+  {\large\bfseries\color{bleuSGN}}
+  {\thesection.}{0.5em}{}
+  [\vspace{-0.3em}\rule{\linewidth}{0.8pt}]
+\titleformat{\subsection}[block]
+  {\normalsize\bfseries\color{gray!70!black}}
+  {\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}[block]
+  {\small\bfseries\color{gray!60!black}}
+  {\thesubsubsection.}{0.5em}{}
+
+% --- Boites semantiques (tcbset) ---
+\tcbset{
+  boxbase/.style={breakable,enhanced,fonttitle=\small\bfseries,
+                  left=6pt,right=6pt,top=4pt,bottom=4pt},
+  infobox/.style={boxbase,colback=blue!5!white,colframe=bleuSGN!70!white},
+  codebox/.style={boxbase,colback=grisbg,colframe=grisrule},
+  warnbox/.style={boxbase,colback=red!4!white,colframe=rougeSGN!70!white},
+  okbox/.style={boxbase,colback=green!5!white,colframe=vertSGN!70!white}
+}
+
+% ============================================================
+\begin{document}
+
+% ---- PAGE DE GARDE ----
+\begin{titlepage}
+  \centering
+
+  % ── Logos ──────────────────────────────────────────────
+  \begin{minipage}{0.35\linewidth}
+    \centering
+    \includegraphics[width=4cm]{/Users/Apple/Downloads/IMG_UGB.jpeg}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.35\linewidth}
+    \centering
+    \includegraphics[width=4cm]{/Users/Apple/Downloads/images.png}
+  \end{minipage}
+
+  \vspace{1.2cm}
+
+  % ── Institution ────────────────────────────────────────
+  {\large\bfseries Université Gaston Berger de Saint-Louis\\[0.2em]
+                   Institut Polytechnique de Saint-Louis\\[0.2em]
+                   GeIT 2\par}
+
+  \vspace{0.6cm}
+
+  % ── Bandeau titre ──────────────────────────────────────
+  \noindent\textcolor{bleuSGN}{\rule{\linewidth}{1.5pt}}\\[2pt]
+  \vspace{0.3cm}
+
+  {\large\bfseries Système de Gestion des Notes (SGN) :\\
+  Analyse Lexicale et Syntaxique avec Flex, Bison\par}
+
+  \vspace{0.2cm}
+  \noindent\textcolor{bleuSGN}{\rule{\linewidth}{1.5pt}}
+
+  \vspace{2.5cm}
+
+  % ── Auteurs ────────────────────────────────────────────
+  \begin{flushleft}
+    {\normalsize Réalisés par :\\[0.4em]
+    \textbf{Papa Mbaye BA}\\[0.2em]
+    \textbf{Gilbert Ngor Thiomby DIOUF}\par}
+  \end{flushleft}
+
+  \vspace{1.0cm}
+
+  % ── Encadrant ──────────────────────────────────────────
+  \begin{flushright}
+    {\normalsize Enseignant :\\[0.4em]
+    \textbf{Dr El Hadji Malick NDOYE}\par}
+  \end{flushright}
+
+  \vfill
+
+  % ── Date ───────────────────────────────────────────────
+  \begin{flushleft}
+    {\normalsize Date de Soumission : 15 Juin 2026\par}
+  \end{flushleft}
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}
+
+\subsection{Contexte et motivation}
+
+Ce projet s'inscrit dans le module de \textbf{Compilation}.
+Il consiste à concevoir et implémenter un \textbf{Système de Gestion des Notes (SGN)}
+pour les trois premières années de Licence (L1, L2, L3), en mettant en œuvre l'ensemble
+de la chaîne de traitement d'un langage dédié : de la grammaire formelle jusqu'à l'interface
+graphique.
+
+\subsection{Objectifs pédagogiques}
+
+Le projet couvre les compétences suivantes :
+
+\begin{itemize}
+  \item Conception d'une \textbf{grammaire formelle BNF} pour un langage de description de données
+  \item Implémentation d'un \textbf{analyseur lexical} avec Flex 2.6
+  \item Implémentation d'un \textbf{analyseur syntaxique et sémantique} avec Bison 3.x (LALR-1)
+  \item Programmation en \textbf{C (C99)} pour les structures de données et la sérialisation JSON
+  \item Développement d'une \textbf{interface graphique} Python/PyQt6 communiquant avec le binaire C via \texttt{subprocess}
+\end{itemize}
+
+\subsection{Flux global d'exécution}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.8cm]
+ % Rangée 1 : pipeline C
+  \node[boite]  (sgn)   {Fichier \texttt{.sgn}};
+  \node[boiteC, right=1.0cm of sgn]  (lex)   {Flex\\(lexer.l)};
+  \node[boiteC, right=1.0cm of lex]  (bison) {Bison\\(parser.y)};
+  \node[boiteC, right=1.0cm of bison](main)  {main.c\\(symboles.h)};
+  \node[boiteP, right=1.0cm of main] (json)  {JSON\\stdout};
+
+  % Rangée 2 : côté Python (alignée sous json)
+  \node[boiteP, below=1.0cm of json] (gui)  {Interface\\Python};
+  \node[boite,  left=1.0cm of gui]   (user) {Résultats\\utilisateur};
+
+  % Flèches rangée 1
+  \draw[fleche] (sgn)   -- (lex);
+  \draw[fleche] (lex)   -- node[above,font=\tiny\itshape]{tokens}   (bison);
+  \draw[fleche] (bison) -- node[above,font=\tiny\itshape]{AST/sém.} (main);
+  \draw[fleche] (main)  -- (json);
+
+  % Coude JSON → GUI
+  \draw[fleche] (json) -- node[right,font=\tiny\itshape]{subprocess} (gui);
+  \draw[fleche] (gui)  -- (user);
+\end{tikzpicture}
+\caption{Flux global d'exécution du système SGN}
+\end{figure}
+
+Le fichier source \texttt{.sgn} est d'abord tokenisé par \textbf{Flex}, qui transmet les
+tokens à \textbf{Bison}. Ce dernier construit la structure de données en mémoire, effectue
+les vérifications sémantiques et déclenche le calcul des moyennes. Le binaire \texttt{sgn\_parser}
+émet alors un flux \textbf{JSON} sur la sortie standard, lu par l'interface Python via
+\texttt{subprocess.run()}.
+
+% ============================================================
+\section{Spécification du langage \texttt{.sgn}}
+
+\subsection{Description du domaine}
+
+Le système gère les notes d'étudiants sur trois niveaux d'études, chacun couvrant deux semestres :
+
+\begin{center}
+\begin{tabularx}{0.85\linewidth}{>{\bfseries}l l l l}
+\toprule
+Niveau & Désignation & Semestres & Modules types \\
+\midrule
+L1 & Première année de Licence  & S1, S2 & Algorithmique, Maths, Architecture \\
+L2 & Deuxième année de Licence  & S3, S4 & POO, BDD, Systèmes, Compilation    \\
+L3 & Troisième année de Licence & S5, S6 & IA, Génie Logiciel, Réseaux        \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Chaque étudiant possède un \textbf{matricule unique}, un \textbf{nom}, un \textbf{prénom}
+(optionnel), et une liste de modules par semestre, chacun associé à un \textbf{coefficient}
+et une \textbf{note} sur 20.
+
+\subsection{Structure d'un fichier \texttt{.sgn}}
+
+\begin{lstlisting}[language=SGN, caption={Extrait du fichier \texttt{test\_valide.sgn}}]
+-- Fichier notes : Annee academique 2025-2026
+ANNEE "2025-2026"
+
+NIVEAU L1 {
+    ETUDIANT {
+        MATRICULE : "L1-2025-001"
+        NOM : "DIALLO Mamadou"
+        PRENOM : "Mamadou"
+        SEMESTRE S1 {
+            MODULE "Algorithmique" COEF 3 NOTE 14.5
+            MODULE "Mathematiques" COEF 4 NOTE 12.0
+            MODULE "Architecture"  COEF 2 NOTE 16.0
+        }
+        SEMESTRE S2 {
+            MODULE "Programmation C" COEF 3 NOTE 13.5
+            MODULE "Logique"         COEF 3 NOTE 11.0
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Grammaire formelle (BNF)}
+
+La grammaire complète du langage \texttt{.sgn} est définie en BNF comme suit :
+
+\begin{tcolorbox}[codebox, title={Grammaire BNF du langage .sgn}]
+\begin{lstlisting}[numbers=none,frame=none,backgroundcolor=\color{white}]
+<programme>       ::= ANNEE STRING <liste_niveaux>
+<liste_niveaux>   ::= <niveau> | <liste_niveaux> <niveau>
+<niveau>          ::= NIVEAU <id_niveau> '{' <liste_etudiants> '}'
+<id_niveau>       ::= L1 | L2 | L3
+<liste_etudiants> ::= <etudiant> | <liste_etudiants> <etudiant>
+<etudiant>        ::= ETUDIANT '{' <champs_etudiant>
+                        <liste_semestres> '}'
+<champs_etudiant> ::= MATRICULE ':' STRING NOM ':' STRING
+                        [ PRENOM ':' STRING ]
+<liste_semestres> ::= <semestre> | <liste_semestres> <semestre>
+<semestre>        ::= SEMESTRE <id_sem> '{' <liste_modules> '}'
+<id_sem>          ::= S1 | S2 | S3 | S4 | S5 | S6
+<liste_modules>   ::= <module> | <liste_modules> <module>
+<module>          ::= MODULE STRING COEF ENTIER NOTE REEL
+<STRING>          ::= '"' [^"]* '"'
+<REEL>            ::= [0-9]+ ('.' [0-9]+)?
+<ENTIER>          ::= [0-9]+
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsection{Tableau des tokens lexicaux}
+
+\begin{center}
+\begin{tabularx}{0.95\linewidth}{>{\ttfamily}l l l}
+\toprule
+\normalfont\textbf{Token} & \textbf{Description} & \textbf{Exemple} \\
+\midrule
+ANNEE      & Mot-clé de début de fichier    & \texttt{ANNEE}             \\
+NIVEAU     & Déclaration d'un niveau        & \texttt{NIVEAU}            \\
+ETUDIANT   & Bloc étudiant                  & \texttt{ETUDIANT}          \\
+MATRICULE  & Identifiant matricule          & \texttt{MATRICULE}         \\
+NOM / PRENOM & Champs nominaux             & \texttt{NOM}, \texttt{PRENOM} \\
+SEMESTRE   & Déclaration d'un semestre      & \texttt{SEMESTRE}          \\
+MODULE     & Déclaration d'un module        & \texttt{MODULE}            \\
+COEF       & Coefficient du module          & \texttt{COEF}              \\
+NOTE       & Note obtenue                   & \texttt{NOTE}              \\
+L1/L2/L3   & Identifiants de niveau         & \texttt{L1}, \texttt{L3}   \\
+S1..S6     & Identifiants de semestre       & \texttt{S1}, \texttt{S4}   \\
+REEL       & Nombre réel                    & \texttt{14.5}, \texttt{9.0}\\
+ENTIER     & Nombre entier                  & \texttt{3}, \texttt{1}     \\
+STRING\_TOK & Chaîne entre guillemets       & \texttt{"Algorithmique"}   \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ============================================================
+\section{Analyseur lexical --- \texttt{lexer.l} (Flex)}
+
+\subsection{Structure du fichier}
+
+
+Le fichier \texttt{lexer.l} est organisé en trois sections selon la convention Flex :
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.3cm]
+  \node[boiteC,text width=12cm,minimum height=0.8cm]
+    (s1) {\textbf{Section 1 — Prologue C} : \texttt{\%\{ \#include "parser.tab.h", "symboles.h" \%\}}};
+  \node[boiteC,text width=12cm,minimum height=0.8cm,below=of s1]
+    (s2) {\textbf{Section 2 — Définitions} : \texttt{\%option yylineno}, macros \texttt{BLANC}, \texttt{NOMBRE}, \texttt{STR}, \texttt{COMMENT}};
+  \node[boiteC,text width=12cm,minimum height=0.8cm,below=of s2]
+    (s3) {\textbf{Section 3 — Règles} : 19 tokens reconnus + gestion erreurs via \texttt{ajouter\_erreur()}};
+  \draw[fleche] (s1) -- (s2);
+  \draw[fleche] (s2) -- (s3);
+\end{tikzpicture}
+\caption{Structure du fichier \texttt{lexer.l}}
+\end{figure}
+
+Le fichier \texttt{lexer.l} est le fichier source de l'analyseur lexical écrit pour Flex.
+Tout fichier Flex est obligatoirement divisé en trois sections séparées par \texttt{\%\%}.
+La première, le \textbf{prologue C}, contient du code C pur encadré par \texttt{\%\{} et
+\texttt{\%\}}, copié tel quel en tête du fichier généré : on y place les \texttt{\#include}
+de \texttt{parser.tab.h} (qui fournit les numéros de tokens générés par Bison) et de
+\texttt{symboles.h} (qui donne accès aux structures de données et à
+\texttt{ajouter\_erreur()}). La deuxième section contient les \textbf{définitions} :
+l'option \texttt{\%option yylineno} demande à Flex de compter automatiquement les lignes
+dans \texttt{yylineno}, et les macros (\texttt{BLANC}, \texttt{NOMBRE}, \texttt{STR},
+\texttt{COMMENT}) sont des abréviations d'expressions régulières réutilisables dans la
+section suivante.
+
+La troisième section, le \textbf{cœur du lexer}, contient les règles : chacune associe
+un motif (expression régulière) à une action (code C). Les 19 règles couvrent les
+mots-clés (\texttt{ANNEE}, \texttt{NIVEAU}\ldots), les identifiants de niveau et de
+semestre (\texttt{L1}, \texttt{S1}\ldots), les littéraux (\texttt{STRING}, \texttt{REEL},
+\texttt{ENTIER}) et les séparateurs (\texttt{\{}, \texttt{\}}, \texttt{:}). Les deux
+dernières règles sont dédiées à la gestion des erreurs : elles capturent tout caractère
+ou chaîne non reconnu et appellent \texttt{ajouter\_erreur("LEX", yylineno, msg)} pour
+enregistrer l'erreur sans interrompre le parsing. Flex lit le fichier \texttt{.sgn}
+caractère par caractère, applique ces règles et transmet les tokens reconnus à Bison.
+
+
+\subsection{Options et définitions de macros}
+
+\begin{lstlisting}[style=styleFlex, caption={Options et macros dans \texttt{lexer.l}}]
+%option noyywrap yylineno warn noinput nounput
+
+BLANC    [ \t\r]+
+NL       \n
+NOMBRE   [0-9]+(\.[0-9]+)?
+STR      \"[^\"\n]*\"
+COMMENT  "--"[^\n]*
+\end{lstlisting}
+
+L'option \texttt{yylineno} délègue à Flex le suivi automatique du numéro de ligne,
+indispensable pour la localisation des erreurs. L'option \texttt{noyywrap} supprime
+la redéfinition de \texttt{yywrap()}.
+
+\subsection{Règles de reconnaissance}
+
+\begin{lstlisting}[style=styleFlex, caption={Extrait des règles lexicales --- mots-clés et littéraux}]
+{COMMENT}   { /* commentaire ignore */ }
+{BLANC}     { /* blancs ignores      */ }
+{NL}        { /* saut de ligne       */ }
+
+"ANNEE"     { return ANNEE;        }
+"NIVEAU"    { return NIVEAU_KW;    }
+"ETUDIANT"  { return ETUDIANT_KW;  }
+"MODULE"    { return MODULE_KW;    }
+"COEF"      { return COEF_KW;      }
+"NOTE"      { return NOTE_KW;      }
+"L1"        { return NIV_L1_TOK;  }
+"S1"        { return SEM_S1_TOK;  }
+
+{NOMBRE}    {
+    if (strchr(yytext, '.')) {
+        yylval.reel   = atof(yytext); return REEL;
+    } else {
+        yylval.entier = atoi(yytext); return ENTIER;
+    }
+}
+{STR}       { yylval.chaine = strip_quotes(yytext); return STRING_TOK; }
+\end{lstlisting}
+
+La règle \texttt{NOMBRE} dispatche en deux tokens distincts : \textbf{REEL} si le texte
+contient un point décimal, \textbf{ENTIER} sinon. La fonction \texttt{strip\_quotes()}
+retire les guillemets et retourne une chaîne allouée dynamiquement avec \texttt{malloc()},
+libérée dans les actions Bison.
+
+\subsection{Gestion des erreurs lexicales}
+
+\begin{lstlisting}[style=styleFlex, caption={Collecte des erreurs lexicales dans \texttt{g\_erreurs[]}}]
+\"[^\"\n]*\n {
+    char msg[MAX_STR];
+    snprintf(msg, MAX_STR,
+        "chaine non terminee a la ligne %d", yylineno);
+    ajouter_erreur("LEX", yylineno, msg);
+}
+.  {
+    char msg[MAX_STR];
+    snprintf(msg, MAX_STR,
+        "caractere illegal '%s' (ASCII %d)",
+        yytext, (unsigned char)yytext[0]);
+    ajouter_erreur("LEX", yylineno, msg);
+}
+\end{lstlisting}
+
+Toute erreur lexicale appelle \texttt{ajouter\_erreur("LEX", ...)} qui l'enregistre
+dans le tableau global \texttt{g\_erreurs[]} et la signale sur \texttt{stderr}.
+Le parsing peut se poursuivre malgré l'erreur.
+
+% ============================================================
+\section{Analyseur syntaxique et sémantique --- \texttt{parser.y} (Bison)}
+
+\subsection{Déclarations et union de valeurs}
+
+\begin{lstlisting}[style=styleBison, caption={Déclarations Bison --- union et tokens}]
+%define parse.error verbose
+
+%union { double reel; int entier; char *chaine; }
+
+%token ANNEE NIVEAU_KW ETUDIANT_KW MATRICULE_KW NOM_KW PRENOM_KW
+%token SEMESTRE_KW MODULE_KW COEF_KW NOTE_KW
+%token NIV_L1_TOK NIV_L2_TOK NIV_L3_TOK
+%token SEM_S1_TOK SEM_S2_TOK SEM_S3_TOK SEM_S4_TOK SEM_S5_TOK SEM_S6_TOK
+%token <reel>   REEL
+%token <entier> ENTIER
+%token <chaine> STRING_TOK
+%type  <entier> id_niveau id_sem
+\end{lstlisting}
+
+L'union \texttt{\%union} définit les trois types de valeurs sémantiques possibles.
+La directive \texttt{\%define parse.error verbose} produit des messages d'erreur
+syntaxique détaillés, intégrés dans le JSON de sortie.
+
+\subsection{Variables de contexte}
+
+Quatre variables statiques maintiennent le contexte de construction pendant le parsing :
+
+\begin{lstlisting}[style=styleBison, caption={Variables de contexte dans \texttt{parser.y}}]
+static Niveau    *ctx_niv      = NULL;  /* niveau courant    */
+static Etudiant  *ctx_etu      = NULL;  /* etudiant courant  */
+static Semestre  *ctx_sem      = NULL;  /* semestre courant  */
+static CodeNiveau ctx_code_niv = 0;     /* code du niveau    */
+\end{lstlisting}
+
+\subsection{Règles de production principales}
+
+\begin{lstlisting}[style=styleBison, caption={Règle \texttt{programme} et règle \texttt{module\_item}}]
+programme
+    : ANNEE STRING_TOK liste_niveaux
+        {
+            strncpy(g_programme.annee, $2, MAX_STR - 1);
+            free($2);
+            programme_calcule_tout(&g_programme);
+        }
+    ;
+
+module_item
+    : MODULE_KW STRING_TOK COEF_KW ENTIER NOTE_KW REEL
+        {
+            char msg[MAX_STR];
+            /* Verification 1 : note dans [0,20] */
+            if ($6 < 0.0 || $6 > 20.0) {
+                snprintf(msg, MAX_STR,
+                    "note %.2f hors [0,20] pour \"%s\"", $6, $2);
+                ajouter_erreur("SEM", yylineno, msg);
+            }
+            /* Verification 2 : coefficient >= 1 */
+            if ($4 < 1) {
+                snprintf(msg, MAX_STR,
+                    "coefficient %d invalide pour \"%s\"", $4, $2);
+                ajouter_erreur("SEM", yylineno, msg);
+            }
+            if (ctx_sem) semestre_add_module(ctx_sem, $2, $4, $6);
+            free($2);
+        }
+    ;
+\end{lstlisting}
+
+\subsection{Les quatre vérifications sémantiques}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{>{\bfseries}l l X}
+\toprule
+\# & Condition vérifiée & Action en cas d'erreur \\
+\midrule
+1 & Note $\in [0.0,\ 20.0]$ & \texttt{ajouter\_erreur("SEM", ...)} + parsing continue \\
+2 & Coefficient $\geq 1$     & \texttt{ajouter\_erreur("SEM", ...)} + parsing continue \\
+3 & Matricule unique par niveau & \texttt{ajouter\_erreur("SEM", ...)} + \texttt{ctx\_etu = NULL} \\
+4 & Semestre cohérent avec niveau & \texttt{ajouter\_erreur("SEM", ...)} + semestre ignoré \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{0.5em}
+La vérification~4 repose sur la fonction \texttt{semestre\_valide\_pour\_niveau()} définie
+dans \texttt{main.c} : L1 n'accepte que S1/S2, L2 que S3/S4, L3 que S5/S6.
+
+\subsection{Organigramme du traitement d'une erreur sémantique}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.8cm and 1.5cm]
+  \node[boiteC] (det) {Détection\\dans action Bison};
+  \node[boiteE,right=2cm of det] (add) {\texttt{ajouter\_erreur()}\\stocke dans \texttt{g\_erreurs[]}};
+  \node[boiteC,right=2cm of add] (cont) {Parsing\\continue};
+  \node[boiteP,below=of add] (err) {Émission sur\\stderr};
+  \node[boiteP,below=of cont] (json) {Inclus dans\\JSON de sortie};
+
+  \draw[fleche] (det)  -- (add);
+  \draw[fleche] (add)  -- (cont);
+  \draw[fleche] (add)  -- (err);
+  \draw[fleche] (cont) -- (json);
+\end{tikzpicture}
+\caption{Flux de traitement d'une erreur sémantique}
+\end{figure}
+
+La fonction \texttt{yyerror()} collecte de même les erreurs syntaxiques :
+
+\begin{lstlisting}[style=styleBison, caption={Collecte unifiée dans \texttt{yyerror()}}]
+void yyerror(const char *msg)
+{
+    ajouter_erreur("SYN", yylineno, msg);
+}
+\end{lstlisting}
+
+% ============================================================
+\section{Implémentation C --- \texttt{main.c} et \texttt{symboles.h}}
+
+\subsection{Architecture des fichiers source}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=0.6cm and 1.2cm]
+  \node[boiteC,text width=3.5cm] (sh) {\textbf{symboles.h}\\structures + prototypes\\(déclarations uniquement)};
+  \node[boite,text width=3cm,above left=1.2cm and 0.8cm of sh]  (ly) {lexer.l\\(Flex)};
+  \node[boite,text width=3cm,above=1.2cm of sh]       (py) {parser.y\\(Bison)};
+  \node[boite,text width=3cm,above right=1.2cm and 0.8cm of sh] (mc) {main.c\\(implémentations)};
+  \node[boiteP,text width=3cm,below=1.2cm of sh]      (mk) {Makefile\\(compilation)};
+
+  \draw[fleche] (sh) -- (ly);
+  \draw[fleche] (sh) -- (py);
+  \draw[fleche] (sh) -- (mc);
+  \draw[fleche] (mk) -- (sh);
+\end{tikzpicture}
+\caption{Dépendances entre les fichiers source}
+\end{figure}
+
+Le fichier \texttt{symboles.h} ne contient \textbf{aucune implémentation} : uniquement
+les déclarations de structures, les constantes, les \texttt{extern} des variables globales
+et les prototypes de fonctions. Toutes les implémentations résident dans \texttt{main.c}.
+
+\subsection{Structures de données}
+
+\begin{lstlisting}[style=styleC, caption={Hiérarchie des structures dans \texttt{symboles.h}}]
+typedef struct {
+    char   nom[MAX_STR]; int coef; double note;
+} Module;
+
+typedef struct {
+    CodeSemestre id;
+    Module       modules[MAX_MOD];  /* MAX_MOD = 64 */
+    int          nb_modules;
+    double       moyenne;
+} Semestre;
+
+typedef struct {
+    char     matricule[MAX_STR], nom[MAX_STR];
+    Semestre semestres[MAX_SEM]; /* MAX_SEM = 6  */
+    int      nb_semestres;
+    double   moyenne_annuelle;
+    char     mention[32], decision[16];
+    int      rang;
+} Etudiant;
+
+typedef struct {
+    CodeNiveau id;
+    Etudiant   etudiants[MAX_ETU]; /* MAX_ETU = 256 */
+    int        nb_etudiants;
+} Niveau;
+
+typedef struct {
+    char   annee[MAX_STR];
+    Niveau niveaux[MAX_NIV];       /* MAX_NIV = 3   */
+    int    nb_niveaux;
+} Programme;
+
+typedef struct {
+    int  ligne; char type[16]; char message[MAX_STR];
+} ErreurSGN;
+\end{lstlisting}
+
+Le choix des \textbf{tableaux statiques} (plutôt que l'allocation dynamique) simplifie
+la gestion mémoire : aucun \texttt{free()} nécessaire sur les structures, les limites
+\texttt{MAX\_*} sont suffisamment larges pour le contexte universitaire visé.
+
+\subsection{Variables globales}
+
+\begin{lstlisting}[style=styleC, caption={Variables globales définies dans \texttt{main.c}}]
+Programme g_programme;          /* arbre de donnees principal  */
+ErreurSGN g_erreurs[MAX_ERR];   /* toutes erreurs LEX/SYN/SEM  */
+int       g_nb_erreurs = 0;     /* compteur d'erreurs          */
+\end{lstlisting}
+
+Ces variables sont accessibles depuis \texttt{lexer.l} et \texttt{parser.y} grâce
+aux déclarations \texttt{extern} dans \texttt{symboles.h}. Ce choix est justifié par
+la nature du pipeline Flex/Bison : les actions lexicales et syntaxiques doivent pouvoir
+alimenter la structure globale sans passer de pointeurs à travers la pile LALR.
+
+\subsection{Catalogue des fonctions implémentées}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{>{\ttfamily\small}l X}
+\toprule
+\normalfont\textbf{Fonction} & \textbf{Rôle} \\
+\midrule
+programme\_init(p)           & Initialise la structure \texttt{Programme} à zéro (\texttt{memset}) \\
+programme\_add\_niveau(p, code) & Recherche ou crée le niveau \texttt{code} dans \texttt{p} \\
+niveau\_find\_etudiant(niv, mat) & Recherche linéaire par matricule dans le niveau \\
+niveau\_add\_etudiant(niv, mat, nom) & Alloue un nouvel étudiant dans le niveau \\
+etudiant\_add\_semestre(e, id) & Crée un semestre pour l'étudiant courant \\
+semestre\_add\_module(s, nom, coef, note) & Ajoute un module au semestre courant \\
+programme\_calcule\_tout(p) & Orchestre les calculs post-parsing \\
+semestre\_valide\_pour\_niveau(sem, niv) & Vérifie la cohérence semestre/niveau \\
+ajouter\_erreur(type, ligne, msg) & Enregistre toute erreur LEX/SYN/SEM \\
+programme\_to\_json(p, out) & Sérialise la structure complète en JSON \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Calculs --- formules du sujet}
+
+\subsubsection{Moyenne pondérée d'un semestre (formule 1)}
+
+\begin{lstlisting}[style=styleC, caption={Implémentation de la formule (1)}]
+static double semestre_moyenne(Semestre *s)
+{
+    double somme_pond = 0.0, somme_coef = 0.0;
+    int i;
+    for (i = 0; i < s->nb_modules; i++) {
+        somme_pond += s->modules[i].coef * s->modules[i].note;
+        somme_coef += s->modules[i].coef;
+    }
+    return somme_coef > 0.0 ? somme_pond / somme_coef : 0.0;
+}
+\end{lstlisting}
+
+$$\bar{M}_s = \frac{\displaystyle\sum_{i=1}^{n} c_i \times n_i}{\displaystyle\sum_{i=1}^{n} c_i}$$
+
+\subsubsection{Moyenne annuelle (formule 2)}
+
+\begin{lstlisting}[style=styleC, caption={Implémentation de la formule (2)}]
+static double etudiant_moyenne_annuelle(Etudiant *e)
+{
+    double total = 0.0;
+    int i;
+    if (e->nb_semestres == 0) return 0.0;
+    for (i = 0; i < e->nb_semestres; i++)
+        total += e->semestres[i].moyenne;
+    return total / e->nb_semestres;
+}
+\end{lstlisting}
+
+$$\bar{M}_a = \frac{1}{S}\sum_{s=1}^{S} \bar{M}_s$$
+
+\subsubsection{Décision et mention}
+
+\begin{lstlisting}[style=styleC, caption={Attribution de la mention}]
+static void etudiant_set_mention(Etudiant *e)
+{
+    double m = e->moyenne_annuelle;
+    if      (m >= 16.0) { strcpy(e->decision,"Admis"); strcpy(e->mention,"Tres Bien");  }
+    else if (m >= 14.0) { strcpy(e->decision,"Admis"); strcpy(e->mention,"Bien");       }
+    else if (m >= 12.0) { strcpy(e->decision,"Admis"); strcpy(e->mention,"Assez Bien"); }
+    else if (m >= 10.0) { strcpy(e->decision,"Admis"); strcpy(e->mention,"Passable");   }
+    else                { strcpy(e->decision,"Ajourne"); strcpy(e->mention,"");          }
+}
+\end{lstlisting}
+
+\subsubsection{Tri et calcul des rangs}
+
+\textbf{niveau\_calcule\_rangs()} trie le tableau \texttt{etudiants[]} par ordre
+décroissant de \texttt{moyenne\_annuelle} via un tri à bulles, puis affecte le rang
+\texttt{i+1} à l'étudiant à la position \texttt{i}.
+
+\subsection{Organigramme de \texttt{main()}}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm,]
+  \node[boiteC] (args)   {Parse arguments\\(\texttt{fichier}, \texttt{--debug})};
+  \node[boiteC,below=of args]  (open)   {\texttt{fopen(fichier)}};
+  \node[boiteC,below=of open]  (init)   {\texttt{programme\_init()}};
+  \node[boiteC,below=of init]  (yyr)    {\texttt{yyrestart(fp)}};
+  \node[boiteC,below=of yyr]   (yp)     {\texttt{yyparse()}};
+ \node[boiteC, below=of yp, text width=3.2cm, font=\small] (calc) {\texttt{programme\_}\\ \texttt{calculate\_tout()}};
+ \node[boiteC, below=of calc, text width=3.2cm, font=\small] (json) {\texttt{programme\_to\_json}\\ \texttt{(stdout)}};
+ \node[boiteP,below=of json]  (exit)   {\texttt{EXIT\_SUCCESS} / \texttt{EXIT\_FAILURE}};
+
+  \draw[fleche] (args) -- (open);
+  \draw[fleche] (open) -- (init);
+  \draw[fleche] (init) -- (yyr);
+  \draw[fleche] (yyr)  -- (yp);
+  \draw[fleche] (yp)   -- (calc);
+  \draw[fleche] (calc) -- (json);
+  \draw[fleche] (json) -- (exit);
+\end{tikzpicture}
+\caption{Organigramme de la fonction \texttt{main()}}
+\end{figure}
+
+\subsection{Sérialisation JSON}
+
+La fonction \texttt{programme\_to\_json()} parcourt la hiérarchie complète
+\texttt{Programme → Niveau → Etudiant → Semestre → Module} et produit le JSON
+conforme au format §3.3.2 du sujet. La fonction auxiliaire \texttt{json\_esc()} échappe
+les caractères spéciaux (\texttt{"} et \texttt{\textbackslash}) pour garantir un JSON valide
+même si les noms contiennent des guillemets.
+
+\begin{tcolorbox}[okbox, title={Exemple de sortie JSON pour \texttt{test\_valide.sgn}}]
+\begin{lstlisting}[style=styleJSON, numbers=none, frame=none, backgroundcolor=\color{green!5}]
+{
+  "annee": "2025-2026",
+  "niveaux": [
+    {
+      "niveau": "L1",
+      "etudiants": [
+        {
+          "matricule": "L1-2025-001",
+          "nom": "DIALLO Mamadou",
+          "moyenne_annuelle": 13.64,
+          "mention": "Assez Bien",
+          "decision": "Admis",
+          "rang": 1
+        }
+      ]
+    }
+  ],
+  "erreurs": []
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+% ============================================================
+\section{Compilation --- \texttt{Makefile}}
+
+\subsection{Compatibilité multi-plateformes}
+
+Le Makefile détecte automatiquement le système d'exploitation via \texttt{\$(shell uname)}
+et adapte les flags en conséquence :
+
+\begin{lstlisting}[language=bash, caption={Détection OS dans le Makefile}]
+OS := $(shell uname)
+
+ifeq ($(OS), Darwin)          # macOS
+    BREW_BISON := $(shell brew --prefix bison 2>/dev/null)/bin/bison
+    ifeq ($(shell test -x "$(BREW_BISON)" && echo yes), yes)
+        BISON = $(BREW_BISON)
+        BISON_WARN = -Wall      # bison Homebrew recent
+    else
+        BISON = bison
+        BISON_WARN =            # bison Xcode (vieux, sans -Wall)
+    endif
+    LDFLAGS = -ll -lm
+else                           # Linux (Ubuntu/Debian)
+    BISON = bison
+    BISON_WARN = -Wall
+    LDFLAGS = -lfl -lm
+endif
+\end{lstlisting}
+
+\subsection{Chaîne de compilation}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.6cm and 1.2cm]
+  \node[boite]  (ly)  {\texttt{lexer.l}};
+  \node[boite,right=2cm of ly]  (py)  {\texttt{parser.y}};
+  \node[boite,right=2cm of py]  (mc)  {\texttt{main.c}};
+
+  \node[boiteC,below=of ly]   (lex)   {\texttt{flex}};
+  \node[boiteC,below=of py]   (bis)   {\texttt{bison -d}};
+  \node[boiteP,below=of bis]  (tab)   {\texttt{parser.tab.h}};
+
+  \node[boiteP,below=of lex]  (lyy)   {\texttt{lex.yy.o}};
+  \node[boiteP,below=of tab]  (tabo)  {\texttt{parser.tab.o}};
+  \node[boiteP,below=of mc]   (mo)    {\texttt{main.o}};
+
+  \node[boiteE,below=2.2cm of tabo] (bin) {\texttt{sgn\_parser}};
+
+  \draw[fleche] (ly)  -- (lex);
+  \draw[fleche] (py)  -- (bis);
+  \draw[fleche] (bis) -- (tab);
+  \draw[fleche] (lex) -- (lyy);
+  \draw[fleche] (tab) -- (lyy);
+  \draw[fleche] (tab) -- (tabo);
+  \draw[fleche] (mc)  -- (mo);
+  \draw[fleche] (lyy)  -- (bin);
+  \draw[fleche] (tabo) -- (bin);
+  \draw[fleche] (mo)   -- (bin);
+\end{tikzpicture}
+\caption{Chaîne de compilation du projet SGN}
+\end{figure}
+
+% ============================================================
+\section{Interface graphique Python}
+
+\subsection{Architecture des fichiers}
+
+L'interface est répartie en trois fichiers Python :
+
+\begin{center}
+\begin{tabularx}{0.92\linewidth}{>{\ttfamily}l X}
+\toprule
+\normalfont\textbf{Fichier} & \textbf{Rôle} \\
+\midrule
+app.py          & Fenêtre principale PyQt6 : Vue + Contrôleur \\
+parser\_bridge.py & Pont subprocess vers \texttt{sgn\_parser}, parse le JSON retourné \\
+interface.py    & Constantes de style, widget \texttt{FilePanel} (drag \& drop) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Diagramme de séquence : analyse d'un fichier}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=1.0cm and 0.5cm]
+  % Acteurs
+  \node[boite,text width=2.2cm]  (usr)  {Utilisateur};
+  \node[boiteP,text width=2.4cm,right=1.8cm of usr] (app)  {app.py};
+  \node[boiteP,text width=2.8cm,right=1.8cm of app] (bri)  {parser\_bridge.py};
+  \node[boiteC,text width=2.4cm,right=1.8cm of bri] (bin)  {sgn\_parser};
+  
+  \draw[dashed, thin, gray!90] (usr.south) -- ([yshift=-6cm]usr.south);
+  \draw[dashed, thin, gray!90] (app.south) -- ([yshift=-6cm]app.south);
+  \draw[dashed, thin, gray!90] (bri.south) -- ([yshift=-6cm]bri.south);
+  \draw[dashed, thin, gray!90] (bin.south) -- ([yshift=-6cm]bin.south);
+
+  % Messages séquentiels (flèches simples vers la droite et gauche)
+  \node[below=0.6cm of usr,etiq,anchor=west] (m1) {};
+  \draw[fleche] ([yshift=-1.0cm]usr.south) -- node[above,etiq,font=\footnotesize,text=darkgray]{(1) Clic Analyser} ([yshift=-1.0cm]app.south);
+  \draw[fleche] ([yshift=-1.8cm]app.south) -- node[above,etiq,font=\footnotesize, text=darkgray]{(2) analyser(chemin)} ([yshift=-1.8cm]bri.south);
+  \draw[fleche] ([yshift=-2.6cm]bri.south) -- node[above,etiq,font=\footnotesize,text=darkgray]{(3) subprocess.run()} ([yshift=-2.6cm]bin.south);
+  \draw[fleche] ([yshift=-3.6cm]bin.south) -- node[above,etiq,font=\footnotesize, text=darkgray]{(4) JSON stdout} ([yshift=-3.6cm]bri.south);
+  \draw[fleche] ([yshift=-4.4cm]bri.south) -- node[above,etiq,font=\footnotesize, text=darkgray]{(5) dict Python} ([yshift=-4.4cm]app.south);
+  \draw[fleche] ([yshift=-5.2cm]app.south) -- node[above,etiq,font=\footnotesize, text=darkgray]{(6) Affichage résultats} ([yshift=-5.2cm]usr.south);
+\end{tikzpicture}
+\caption{Diagramme de séquence : analyse d'un fichier \texttt{.sgn}}
+\end{figure}
+
+\subsection{Communication subprocess}
+
+\begin{lstlisting}[language=Python, caption={Extrait de \texttt{parser\_bridge.py} --- appel subprocess}]
+res = subprocess.run(
+    [bin_path, chemin_sgn],
+    capture_output=True, text=True, timeout=15
+)
+if res.stdout.strip():
+    return json.loads(res.stdout)
+\end{lstlisting}
+
+La communication entre Python et le binaire C est \textbf{unidirectionnelle} :
+le binaire lit le fichier \texttt{.sgn} depuis le disque, écrit le JSON sur
+\texttt{stdout} et les messages de débogage sur \texttt{stderr}. Python capture
+\texttt{stdout} via \texttt{capture\_output=True} et décode le JSON avec
+\texttt{json.loads()}.
+
+\subsection{Fonctionnalités de l'interface}
+
+L'interface offre les fonctionnalités suivantes :
+
+\begin{itemize}
+  \item \textbf{Chargement} par bouton Parcourir ou drag \& drop sur le panneau fichier
+  \item \textbf{Éditeur intégré} : zone de texte éditable avant analyse, sauvegardée avant chaque appel
+  \item \textbf{Onglet Résultats} : tableau PyQt6 avec colonnes Matricule, Nom, Niveau, Semestre, Moyennes, Rang, Mention, Décision
+  \item \textbf{Onglet JSON brut} : affichage du JSON complet retourné par \texttt{sgn\_parser}
+  \item \textbf{Bandeau d'erreurs} : apparaît uniquement si des erreurs sont détectées, avec type (LEX/SYN/SEM), numéro de ligne et message
+  \item \textbf{Export CSV} : tableau des résultats + section erreurs en bas
+  \item \textbf{Export TXT} : tableau ASCII avec colonnes centrées + section erreurs
+\end{itemize}
+
+% ============================================================
+\section{Tests et validation}
+
+\subsection{Stratégie de tests}
+
+Quatre fichiers de test couvrent les cas nominaux et d'erreur :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{>{\ttfamily}l l X}
+\toprule
+\normalfont\textbf{Fichier} & \textbf{Type} & \textbf{Contenu} \\
+\midrule
+test\_valide.sgn     & Nominal       & 3 étudiants sur 2 niveaux, toutes données correctes \\
+test\_erreur\_lex.sgn & Erreur LEX   & Caractère illégal \texttt{\#}, chaîne non terminée \\
+test\_erreur\_syn.sgn & Erreur SYN   & Token manquant, accolade non fermée \\
+test\_erreur\_sem.sgn & Erreur SEM   & Note 22.0, coef 0, doublon matricule, S3 dans L1 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Vérification de la compilation}
+
+\begin{tcolorbox}[okbox, title={Sortie de \texttt{make} sur Ubuntu 24.04}]
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth,keepaspectratio]{/Users/Apple/Downloads/Capture d’écran 2026-06-11 à 08.37.03.png}
+\end{figure}
+\end{tcolorbox}
+
+
+\subsection{Résultats obtenus}
+
+\subsubsection{Test 1 --- Fichier valide}
+
+\begin{figure}[H]  
+	\centering
+	\includegraphics[width=\textwidth,keepaspectratio]{/Users/Apple/Downloads/Capture d’écran 2026-06-11 à 08.47.47.png}
+	\caption{Test d'un fichier .sgn valide}
+\end{figure}
+
+\subsubsection{Test 4 --- Erreurs sémantiques}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth,keepaspectratio]{/Users/Apple/Downloads/Capture d’écran 2026-06-11 à 08.48.12.png}
+	\caption{Test d'un fichier .sgn contenant des erreurs sémantiques}
+\end{figure}
+
+\textbf{Point clé} : le JSON est \textbf{toujours émis}, même en présence d'erreurs.
+Les erreurs apparaissent dans le tableau \texttt{"erreurs":[...]} du JSON, rendant
+l'interface Python opérationnelle dans tous les cas.
+
+
+% ============================================================
+\section{Conclusion}
+
+\subsection{Bilan des fonctionnalités}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{X >{\centering\arraybackslash}l >{\centering\arraybackslash}l}
+\toprule
+\textbf{Fonctionnalité} & \textbf{Réalisé} \\
+\midrule
+Analyseur lexical Flex (tous tokens, erreurs, commentaires)  & \checkmark \\
+Analyseur syntaxique Bison (grammaire BNF conforme)          & \checkmark \\
+Construction table/structure de données                       & \checkmark \\
+Vérifications sémantiques (4 règles)                          & \checkmark \\
+Calculs moyennes, rangs, mentions                            & \checkmark \\
+Interface graphique PyQt6 (chargement, édition, tableau)       & \checkmark \\
+Affichage erreurs coloré avec numéro de ligne                  & \checkmark \\
+Export CSV et TXT                                              & \checkmark \\
+Rapport technique                                              & \checkmark \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Difficultés rencontrées}
+
+Les principales difficultés rencontrées ont été les suivantes. La gestion des
+variables de contexte Bison (\texttt{ctx\_niv}, \texttt{ctx\_etu}, \texttt{ctx\_sem})
+a nécessité une attention particulière : une affectation prématurée ou un oubli de
+réinitialisation à \texttt{NULL} provoquait des erreurs de segmentation silencieuses.
+La collecte unifiée des erreurs LEX, SYN et SEM dans un seul tableau JSON a
+requis la refactorisation de \texttt{yyerror()} et des règles du lexer pour
+appeler \texttt{ajouter\_erreur()} de façon cohérente.
+La compatibilité macOS/Linux au niveau du Makefile a demandé la détection de
+l'OS via \texttt{\$(shell uname)} et l'adaptation des flags \texttt{-Wall} (non supporté
+par le bison embarqué dans Xcode) et des bibliothèques de liaison (\texttt{-ll} vs \texttt{-lfl}).
+
+\subsection{Perspectives d'amélioration}
+
+Plusieurs améliorations pourraient être envisagées. L'ajout d'un \textbf{export PDF}
+directement depuis l'interface Python 
+permettrait une remise de bulletins plus professionnelle. La prise en charge de
+\textbf{L4 et L5} nécessiterait uniquement d'étendre les énumérations \texttt{CodeNiveau}
+et \texttt{CodeSemestre} et d'ajouter les tokens correspondants dans le lexer.
+Enfin, une saisie directe dans la GUI (sans passer par un fichier disque
+intermédiaire) améliorerait l'ergonomie pour les utilisateurs avancés.
+
+\end{document}
