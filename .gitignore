@@ -14,3 +14,6 @@ sgn_parser
 
 # Autres exécutables éventuels
 a.out
+
+__pycache__/
+*.pyc
