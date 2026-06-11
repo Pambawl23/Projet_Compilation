@@ -1,5 +1,5 @@
 # Makefile — Projet SGN (Système de Gestion des Notes)
-# Auteurs : [NOM1] & [NOM2] | Juin 2026
+# Auteurs : Papa Mbaye BA
 # Cibles  : make | make test | make clean | make distclean
 # Compatibilité : Ubuntu/Debian et macOS (Homebrew ou Xcode bison)
 
